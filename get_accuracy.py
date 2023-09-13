@@ -9,6 +9,7 @@ import copy
 from torch.utils.data import TensorDataset, DataLoader
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+import csv
 
 def main(args):
 
@@ -32,52 +33,65 @@ def main(args):
 
 
     ''' Train the model '''
-    model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
-    model.train()
-    lr = args.lr_teacher
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-    optimizer.zero_grad()
+    for run in tqdm(range(10)):
+        model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
+        model.train()
+        lr = args.lr_teacher
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+        optimizer.zero_grad()
 
-    criterion = nn.CrossEntropyLoss().to(args.device)
-    lr_schedule = [args.train_epochs // 2 + 1]
+        criterion = nn.CrossEntropyLoss().to(args.device)
+        lr_schedule = [args.train_epochs // 2 + 1]
 
-    
+        
 
-    for e in range(args.train_epochs):
-        train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
-                                    criterion=criterion, args=args, aug=True)
+        for e in range(args.train_epochs):
+            train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
+                                        criterion=criterion, args=args, aug=True)
 
-        test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
-                                    criterion=criterion, args=args, aug=False)
+            test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
+                                        criterion=criterion, args=args, aug=False)
 
-        if e in lr_schedule and args.decay:
-            lr *= 0.1
-            teacher_optim = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-            teacher_optim.zero_grad()
-        print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
+            if e in lr_schedule and args.decay:
+                lr *= 0.1
+                teacher_optim = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+                teacher_optim.zero_grad()
+            #print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
 
 
 
-    ''' Evaluate per class accuracy '''
-    class_correct = list(0. for i in range(num_classes))
-    class_total = list(0. for i in range(num_classes))
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data
-            images, labels = images.to(args.device), labels.to(args.device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-            c = (predicted == labels).squeeze()
-            for i in range(len(labels)):
-                label = labels[i]
-                class_correct[label] += c[i].item()
-                class_total[label] += 1
+        ''' Evaluate per class accuracy '''
+        class_correct = list(0. for i in range(num_classes))
+        class_total = list(0. for i in range(num_classes))
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                images, labels = images.to(args.device), labels.to(args.device)
+                outputs = model(images)
+                _, predicted = torch.max(outputs, 1)
+                c = (predicted == labels).squeeze()
+                for i in range(len(labels)):
+                    label = labels[i]
+                    class_correct[label] += c[i].item()
+                    class_total[label] += 1
 
-    #print("class names: ", class_names)
-    #print("class correct: ", class_correct)
-    #print("class total:", class_total)
-    for i in range(num_classes):
-        print('Accuracy of %5s : %2d %%' % (class_names[i], 100 * class_correct[i] / class_total[i]))
+        # Calculate accuracies for each class
+        accuracies = [100 * class_correct[i] / class_total[i] for i in range(num_classes)]
+
+        folder_name = "normal_model"
+        if args.DD_files:
+            folder_name = "distilled_model"
+
+        with open(f'{folder_name}/class_accuracies_{run}.csv', 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            
+            # Write header
+            csv_writer.writerow(['Class', 'Accuracy'])
+            
+            # Write data
+            for i in range(num_classes):
+                csv_writer.writerow([class_names[i], accuracies[i]])
+
 
 
 ###

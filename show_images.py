@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 
 # Specify the path to the saved image file
-image_path = './logged_files/CIFAR10/tough-blaze-5/images_0.pt'
+image_path = './logged_files/CIFAR10/balmy-disco-3/images_0.pt'
 
 # Load the image tensor from the file
 image_tensor = torch.load(image_path)

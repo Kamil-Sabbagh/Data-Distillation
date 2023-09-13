@@ -68,7 +68,7 @@ def main(args):
     args.dc_aug_param['strategy'] = 'crop_scale_rotate'  # for whole-dataset training
     print('DC augmentation parameters: \n', args.dc_aug_param)
 
-    for it in range(0, args.num_experts):
+    for it in tqdm(range(0, args.num_experts)):
 
         ''' Train synthetic data '''
         teacher_net = get_network(args.model, channel, num_classes, im_size).to(args.device) # get a random model
@@ -91,7 +91,7 @@ def main(args):
             test_loss, test_acc = epoch("test", dataloader=testloader, net=teacher_net, optimizer=None,
                                         criterion=criterion, args=args, aug=False)
 
-            print("Itr: {}\tEpoch: {}\tTrain Acc: {}\tTest Acc: {}".format(it, e, train_acc, test_acc))
+            #print("Itr: {}\tEpoch: {}\tTrain Acc: {}\tTest Acc: {}".format(it, e, train_acc, test_acc))
 
             timestamps.append([p.detach().cpu() for p in teacher_net.parameters()])
 
@@ -141,6 +141,6 @@ if __name__ == '__main__':
 
 
 
-#python buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=10 --num_experts=1 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python
-#python distill.py --dataset=CIFAR10 --ipc=1 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer --data_path=cifar-10-python
-#python get_accuracy.py --DD_files=True
+#python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --num_experts=60 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python
+#python3 distill.py --dataset=CIFAR10 --ipc=1 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer --data_path=cifar-10-python
+#python3 get_accuracy.py --DD_files=True
