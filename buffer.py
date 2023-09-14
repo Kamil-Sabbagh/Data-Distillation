@@ -20,7 +20,7 @@ def main(args):
     (channel, im_size, num_classes, class_names, mean, std, 
     dst_train, dst_test, testloader, loader_train_dict, class_map, 
     class_map_inv) = get_dataset(args.dataset, args.data_path, args.batch_real, 
-                                args.subset, args=args)
+                                args.subset, args=args, percentage=args.2nd_half_images)
 
     # print('\n================== Exp %d ==================\n '%exp)
     print('Hyper-parameters: \n', args.__dict__)
@@ -134,6 +134,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_interval', type=int, default=1)
     ###
     parser.add_argument('--DD_files', type=bool, default=False, help="used DD files")
+    parser.add_argument('--2nd_half_images', type=bool, default=False, help="used DD files")
 
 
     args = parser.parse_args()
@@ -143,4 +144,4 @@ if __name__ == '__main__':
 
 #python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --num_experts=60 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python
 #python3 distill.py --dataset=CIFAR10 --ipc=1 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer --data_path=cifar-10-python
-#python3 get_accuracy.py --DD_files=True
+#python3 get_accuracy.py --DD_files=True --2nd_half_images=2500
