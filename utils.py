@@ -43,7 +43,7 @@ class Config:
 
 config = Config()
 
-def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None, D_images=None, D_labes=None):
+def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None, D_images=None, D_labes=None, percentage = 6000):
 
     class_map = None
     loader_train_dict = None
@@ -80,6 +80,35 @@ def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None
             dst_train = datasets.CIFAR10(data_path, train=True, download=True, transform=transform) # no augmentation
             dst_test = datasets.CIFAR10(data_path, train=False, download=True, transform=transform)
             class_names = dst_train.classes
+
+             # Assuming x is the number of images you want from each class in the second half
+            x = percentage
+
+            # Split classes into two halves
+            first_half_classes = class_names[:len(class_names)//2]
+            second_half_classes = class_names[len(class_names)//2:]
+
+            # Extracting data
+            data_first_half = [data for data, label in dst_train if class_names[label] in first_half_classes]
+            labels_first_half = [label for _, label in dst_train if class_names[label] in first_half_classes]
+
+            data_second_half = []
+            labels_second_half = []
+            for class_name in second_half_classes:
+                class_idx = class_names.index(class_name)
+                class_data = [data for data, label in dst_train if label == class_idx][:x]
+                class_labels = [label for _, label in dst_train if label == class_idx][:x]
+                
+                data_second_half.extend(class_data)
+                labels_second_half.extend(class_labels)
+
+            # Combining data
+            final_data = data_first_half + data_second_half
+            final_labels = labels_first_half + labels_second_half
+
+            # Your final dataset
+            dst_train = list(zip(final_data, final_labels))
+
         class_map = {x:x for x in range(num_classes)}
 
     elif dataset == 'Tiny':
