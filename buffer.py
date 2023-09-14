@@ -134,7 +134,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_interval', type=int, default=1)
     ###
     parser.add_argument('--DD_files', type=bool, default=False, help="used DD files")
-    parser.add_argument('--2nd_half_images', type=bool, default=False, help="used DD files")
+    parser.add_argument('--2nd_half_images', type=int, default=False, help="used DD files")
 
 
     args = parser.parse_args()
@@ -142,6 +142,6 @@ if __name__ == '__main__':
 
 
 
-#python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --num_experts=60 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python
+#python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --num_experts=100 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python ----2nd_half_images=2500
 #python3 distill.py --dataset=CIFAR10 --ipc=1 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer --data_path=cifar-10-python
-#python3 get_accuracy.py --DD_files=True --2nd_half_images=2500
+#python3 get_accuracy.py --DD_files=True 
