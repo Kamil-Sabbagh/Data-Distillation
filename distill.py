@@ -247,8 +247,8 @@ def main(args):
                 if args.ipc < 50 or args.force_save:
                     upsampled = image_save
                     if args.dataset != "ImageNet":
-                        upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=2)
-                        upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=3)
+                        upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=2)
+                        upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=3)
                     grid = torchvision.utils.make_grid(upsampled, nrow=10, normalize=True, scale_each=True)
                     wandb.log({"Synthetic_Images": wandb.Image(torch.nan_to_num(grid.detach().cpu()))}, step=it)
                     wandb.log({'Synthetic_Pixels': wandb.Histogram(torch.nan_to_num(image_save.detach().cpu()))}, step=it)
@@ -258,8 +258,8 @@ def main(args):
                         mean = torch.mean(image_save)
                         upsampled = torch.clip(image_save, min=mean-clip_val*std, max=mean+clip_val*std)
                         if args.dataset != "ImageNet":
-                            upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=2)
-                            upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=3)
+                            upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=2)
+                            upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=3)
                         grid = torchvision.utils.make_grid(upsampled, nrow=10, normalize=True, scale_each=True)
                         wandb.log({"Clipped_Synthetic_Images/std_{}".format(clip_val): wandb.Image(torch.nan_to_num(grid.detach().cpu()))}, step=it)
 
@@ -272,8 +272,8 @@ def main(args):
 
                         upsampled = image_save
                         if args.dataset != "ImageNet":
-                            upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=2)
-                            upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=3)
+                            upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=2)
+                            upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=3)
                         grid = torchvision.utils.make_grid(upsampled, nrow=10, normalize=True, scale_each=True)
                         wandb.log({"Reconstructed_Images": wandb.Image(torch.nan_to_num(grid.detach().cpu()))}, step=it)
                         wandb.log({'Reconstructed_Pixels': wandb.Histogram(torch.nan_to_num(image_save.detach().cpu()))}, step=it)
@@ -283,8 +283,8 @@ def main(args):
                             mean = torch.mean(image_save)
                             upsampled = torch.clip(image_save, min=mean - clip_val * std, max=mean + clip_val * std)
                             if args.dataset != "ImageNet":
-                                upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=2)
-                                upsampled = torch.repeat_interleave(upsampled, repeats=100, dim=3)
+                                upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=2)
+                                upsampled = torch.repeat_interleave(upsampled, repeats=4, dim=3)
                             grid = torchvision.utils.make_grid(upsampled, nrow=10, normalize=True, scale_each=True)
                             wandb.log({"Clipped_Reconstructed_Images/std_{}".format(clip_val): wandb.Image(
                                 torch.nan_to_num(grid.detach().cpu()))}, step=it)
