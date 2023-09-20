@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 import csv
 
-def main(args):
+def main(args, num_of_images):
 
     args.dsa = True if args.dsa == 'True' else False
     args.dsa_param = ParamDiffAug()
@@ -21,11 +21,11 @@ def main(args):
     D_images, D_labes = None, None
     print("DD = ", args.DD_files)
     if args.DD_files:
-        D_images, D_labes = return_images_and_labels()
+        D_images, D_labes = return_images_and_labels(num_of_images)
     (channel, im_size, num_classes, class_names, mean, std, dst_train,
      dst_test, testloader, loader_train_dict, class_map,
-     class_map_inv) = get_dataset(args.dataset, args.data_path,
-                                args.batch_real, args.subset, args=args, D_images=D_images, D_labes=D_labes)
+     class_map_inv) = get_dataset(args.dataset, args.data_path, 
+                                args.batch_real, args.subset, args=args, D_images=D_images, D_labes=D_labes, percentage=args.second_half_images,)
 
     print('Hyper-parameters: \n', args.__dict__)
 
@@ -78,9 +78,7 @@ def main(args):
         # Calculate accuracies for each class
         accuracies = [100 * class_correct[i] / class_total[i] for i in range(num_classes)]
 
-        folder_name = "normal_model"
-        if args.DD_files:
-            folder_name = "distilled_model"
+        folder_name = f"logged_files/{args.out_put_path}/ipc{num_of_images}"
 
         with open(f'{folder_name}/class_accuracies_{run}.csv', 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
@@ -96,9 +94,9 @@ def main(args):
 
 ###
 
-def return_images_and_labels():
+def return_images_and_labels(n):
     # Go to path
-    base_path = './logged_files/CIFAR10/'
+    base_path = f'./{args.logged_images_path}/ipc{n}/CIFAR10/'
     
     # List all subdirectories in the base path
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
@@ -142,9 +140,13 @@ if __name__ == '__main__':
     #parser.add_argument('--label_file', type=str, default=None, help="Path to the labels files")
     # combined into a better way:
     parser.add_argument('--DD_files', type=bool, default=False, help="used DD files")
+    parser.add_argument('--logged_images_path', type=bool, default=False, help="used DD files")
+    parser.add_argument('--second_half_images', type=int, default=5000, help="Number of the images of second half of the classes")
+    parser.add_argument('--out_put_path', type=int, default=5000, help="Number of the images of second half of the classes")
 
     args = parser.parse_args()
-    main(args)
+    for num_of_images in [1, 25, 50]:
+        main(args, num_of_images)
 
 
 #python get_accuracy.py --DD_files=True

@@ -1,0 +1,41 @@
+-------------------------------------
+-------------------------------------
+Tests to check the difference between disttiled and normal runs using the full dataset.
+-------------------------------------
+
+
+python get_accuracy.py --DD_files=True
+python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --zca --buffer_path=cifar-10-buffer
+--data_path=cifar-10-python --num_experts=100 --second_half_images=5000
+
+
+python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca
+--lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer --force_save --save_path=normal_run
+
+
+python get_accuracy.py --out_put_path=normal_model_equal_representaion
+
+
+python get_accuracy.py --DD_files=True --logged_images_path=normal_run --out_put_path=distilled_model_equal_representaion
+
+
+-------------------------------------
+-------------------------------------
+Tests to check the difference between disttiled and normal models with unequal representations.
+-------------------------------------
+
+
+python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --zca --buffer_path=cifar-10-buffer-not-equal-represented
+--data_path=cifar-10-python --num_experts=100 --second_half_images=2500
+
+
+python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca
+--lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer-not-equal-represented --force_save --save_path=not_equal_run
+
+
+python get_accuracy.py --second_half_images=2500 --out_put_path=normal_model_unequal_representaion
+
+
+python get_accuracy.py --DD_files=True --logged_images_path=not_equal_run --second_half_images=2500 --out_put_path=distilled_model_unequal_representaion
+
+-----------------------------------------------------------------------------------

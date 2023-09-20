@@ -15,7 +15,7 @@ from reparam_module import ReparamModule
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-def main(args):
+def main(args, num_of_images):
 
     if args.zca and args.texture:
         raise AssertionError("Cannot use zca and texture together")
@@ -230,7 +230,7 @@ def main(args):
             with torch.no_grad():
                 image_save = image_syn.cuda()
 
-                save_dir = os.path.join(".", "logged_files", args.dataset, wandb.run.name)
+                save_dir = os.path.join(".", f"logged_files/{args.save_path}/ipc{n}/", args.dataset, wandb.run.name)
 
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
@@ -469,10 +469,14 @@ if __name__ == '__main__':
     parser.add_argument('--max_experts', type=int, default=None, help='number of experts to read per file (leave as None unless doing ablations)')
 
     parser.add_argument('--force_save', action='store_true', help='this will save images for 50ipc')
+    parser.add_argument('--save_path', type=str, default="", help='the path were the logged files will be saved')
 
     args = parser.parse_args()
 
-    main(args)
+    for num_of_images in [1, 25, 50]:
+        args.ipc = num_of_images
+        main(args, num_of_images)
+
 
 
 
