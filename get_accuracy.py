@@ -145,7 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--out_put_path', type=int, default=5000, help="Number of the images of second half of the classes")
 
     args = parser.parse_args()
-    for num_of_images in [1, 25, 50]:
+    for num_of_images in [1, 50]:
         main(args, num_of_images)
 
 
