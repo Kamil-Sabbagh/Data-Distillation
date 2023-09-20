@@ -363,10 +363,11 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False)
             lab = torch.cat([lab for _ in range(args.canvas_samples)])
 
         if aug:
-            if args.dsa:
-                img = DiffAugment(img, args.dsa_strategy, param=args.dsa_param)
-            else:
-                img = augment(img, args.dc_aug_param, device=args.device)
+            img = DiffAugment(img, args.dsa_strategy, param=args.dsa_param)
+            #if args.dsa:
+                #img = DiffAugment(img, args.dsa_strategy, param=args.dsa_param)
+            #else:
+                #img = augment(img, args.dc_aug_param, device=args.device)
 
         if args.dataset == "ImageNet" and mode != "train":
             lab = torch.tensor([class_map[x.item()] for x in lab]).to(args.device)
