@@ -13,10 +13,10 @@ python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_star
 --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer --force_save --save_path=normal_run
 
 
-python get_accuracy.py --out_put_path=normal_model_equal_representaion
+python3 get_accuracy.py --out_put_path=normal_model_equal_representaion
 
 
-python get_accuracy.py --DD_files=True --logged_images_path=normal_run --out_put_path=distilled_model_equal_representaion
+python3 get_accuracy.py --DD_files=True --logged_images_path=normal_run --out_put_path=distilled_model_equal_representaion
 
 
 -------------------------------------
@@ -33,9 +33,9 @@ python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_star
 --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer-not-equal-represented --force_save --save_path=not_equal_run
 
 
-python get_accuracy.py --second_half_images=2500 --out_put_path=normal_model_unequal_representaion
+python3 get_accuracy.py --second_half_images=2500 --out_put_path=normal_model_unequal_representaion
 
 
-python get_accuracy.py --DD_files=True --logged_images_path=not_equal_run --second_half_images=2500 --out_put_path=distilled_model_unequal_representaion
+python3 get_accuracy.py --DD_files=True --logged_images_path=not_equal_run --second_half_images=2500 --out_put_path=distilled_model_unequal_representaion
 
 -----------------------------------------------------------------------------------

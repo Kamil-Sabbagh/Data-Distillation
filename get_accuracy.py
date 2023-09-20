@@ -142,7 +142,7 @@ if __name__ == '__main__':
     parser.add_argument('--DD_files', type=bool, default=False, help="used DD files")
     parser.add_argument('--logged_images_path', type=bool, default=False, help="used DD files")
     parser.add_argument('--second_half_images', type=int, default=5000, help="Number of the images of second half of the classes")
-    parser.add_argument('--out_put_path', type=int, default=5000, help="Number of the images of second half of the classes")
+    parser.add_argument('--out_put_path', type=str, default="", help="which expermint to load data from")
 
     args = parser.parse_args()
     for num_of_images in [1, 10]:
