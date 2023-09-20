@@ -98,6 +98,7 @@ def return_images_and_labels(n):
     # Go to path
     base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
     
+    print(f"getting the data from: {base_path}")
     # List all subdirectories in the base path
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     
