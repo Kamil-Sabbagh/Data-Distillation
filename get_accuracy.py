@@ -96,7 +96,7 @@ def main(args, num_of_images):
 
 def return_images_and_labels(n):
     # Go to path
-    base_path = f'./{args.logged_images_path}/ipc{n}/CIFAR10/'
+    base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
     
     # List all subdirectories in the base path
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--out_put_path', type=int, default=5000, help="Number of the images of second half of the classes")
 
     args = parser.parse_args()
-    for num_of_images in [1, 50]:
+    for num_of_images in [1, 10]:
         main(args, num_of_images)
 
 
