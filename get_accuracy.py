@@ -80,6 +80,8 @@ def main(args, num_of_images):
 
         folder_name = f"logged_files/{args.out_put_path}/ipc{num_of_images}"
 
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
         with open(f'{folder_name}/class_accuracies_{run}.csv', 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             
