@@ -78,7 +78,8 @@ def main(args, num_of_images):
         # Calculate accuracies for each class
         accuracies = [100 * class_correct[i] / class_total[i] for i in range(num_classes)]
 
-        folder_name = f"logged_files/{args.out_put_path}/ipc{num_of_images}"
+        folder_name = f"{args.out_put_path}/ipc{num_of_images}"
+        print(f"Saving images at: {folder_name}")
 
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
@@ -148,7 +149,7 @@ if __name__ == '__main__':
     parser.add_argument('--out_put_path', type=str, default="", help="Path to save the cvs files at")
 
     args = parser.parse_args()
-    for num_of_images in [1, 10]:
+    for num_of_images in [1, 10, 50]:
         main(args, num_of_images)
 
 
