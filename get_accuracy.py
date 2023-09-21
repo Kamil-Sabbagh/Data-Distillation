@@ -108,24 +108,24 @@ def main(args, num_of_images):
 
 
 
-    ###
+###
 
-    def return_images_and_labels(n):
-        # Go to path
-        base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
-        
-        print(f"getting the data from: {base_path}")
-        # List all subdirectories in the base path
-        dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
-        
-        # Get the newest directory based on creation time
-        newest_directory = max(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)))
+def return_images_and_labels(n):
+    # Go to path
+    base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
+    
+    print(f"getting the data from: {base_path}")
+    # List all subdirectories in the base path
+    dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
+    
+    # Get the newest directory based on creation time
+    newest_directory = max(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)))
 
-        # New path = path + newest folder
-        new_path = os.path.join(base_path, newest_directory)
-        
-        # Return paths
-        return os.path.join(new_path, 'images_best.pt'), os.path.join(new_path, 'labels_best.pt')
+    # New path = path + newest folder
+    new_path = os.path.join(base_path, newest_directory)
+    
+    # Return paths
+    return os.path.join(new_path, 'images_best.pt'), os.path.join(new_path, 'labels_best.pt')
 
 
 ###
