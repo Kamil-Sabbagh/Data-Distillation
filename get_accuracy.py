@@ -34,98 +34,98 @@ def main(args, num_of_images):
 
     ''' Train the model '''
     for run in tqdm(range(10)):
-       model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
-    model.train()
-    lr = args.lr_teacher
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-    optimizer.zero_grad()
+        model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
+        model.train()
+        lr = args.lr_teacher
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+        optimizer.zero_grad()
 
-    criterion = nn.CrossEntropyLoss().to(args.device)
-    lr_schedule = [args.train_epochs // 2 + 1]
+        criterion = nn.CrossEntropyLoss().to(args.device)
+        lr_schedule = [args.train_epochs // 2 + 1]
 
-    # Initialize early stopping parameters
-    min_test_loss = float('inf')
-    epochs_no_improve = 0
-    n_iterations = 20  # number of epochs with no improvement after which training will be stopped
+        # Initialize early stopping parameters
+        min_test_loss = float('inf')
+        epochs_no_improve = 0
+        n_iterations = 50  # number of epochs with no improvement after which training will be stopped
 
-    for e in range(args.train_epochs):
-        train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
-                                    criterion=criterion, args=args, aug=True)
+        for e in range(args.train_epochs):
+            train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
+                                        criterion=criterion, args=args, aug=True)
 
-        test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
-                                    criterion=criterion, args=args, aug=False)
+            test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
+                                        criterion=criterion, args=args, aug=False)
 
-        # Early stopping logic
-        if test_loss < min_test_loss:
-            min_test_loss = test_loss
-            epochs_no_improve = 0
-        else:
-            epochs_no_improve += 1
-            if epochs_no_improve == n_iterations:
-                print('Early stopping!')
-                break
+            # Early stopping logic
+            if test_loss < min_test_loss:
+                min_test_loss = test_loss
+                epochs_no_improve = 0
+            else:
+                epochs_no_improve += 1
+                if epochs_no_improve == n_iterations:
+                    print('Early stopping!')
+                    break
 
-        if e in lr_schedule and args.decay:
-            lr *= 0.1
-            optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-            optimizer.zero_grad()
-        print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
-
-
-
-        ''' Evaluate per class accuracy '''
-        class_correct = list(0. for i in range(num_classes))
-        class_total = list(0. for i in range(num_classes))
-        with torch.no_grad():
-            for data in testloader:
-                images, labels = data
-                images, labels = images.to(args.device), labels.to(args.device)
-                outputs = model(images)
-                _, predicted = torch.max(outputs, 1)
-                c = (predicted == labels).squeeze()
-                for i in range(len(labels)):
-                    label = labels[i]
-                    class_correct[label] += c[i].item()
-                    class_total[label] += 1
-
-        # Calculate accuracies for each class
-        accuracies = [100 * class_correct[i] / class_total[i] for i in range(num_classes)]
-
-        folder_name = f"{args.out_put_path}/ipc{num_of_images}"
-        print(f"Saving images at: {folder_name}")
-
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
-        with open(f'{folder_name}/class_accuracies_{run}.csv', 'w', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            
-            # Write header
-            csv_writer.writerow(['Class', 'Accuracy'])
-            
-            # Write data
-            for i in range(num_classes):
-                csv_writer.writerow([class_names[i], accuracies[i]])
+            if e%25==0 and args.decay:
+                lr *= 0.1
+                optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+                optimizer.zero_grad()
+            print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
 
 
 
-###
+            ''' Evaluate per class accuracy '''
+            class_correct = list(0. for i in range(num_classes))
+            class_total = list(0. for i in range(num_classes))
+            with torch.no_grad():
+                for data in testloader:
+                    images, labels = data
+                    images, labels = images.to(args.device), labels.to(args.device)
+                    outputs = model(images)
+                    _, predicted = torch.max(outputs, 1)
+                    c = (predicted == labels).squeeze()
+                    for i in range(len(labels)):
+                        label = labels[i]
+                        class_correct[label] += c[i].item()
+                        class_total[label] += 1
 
-def return_images_and_labels(n):
-    # Go to path
-    base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
-    
-    print(f"getting the data from: {base_path}")
-    # List all subdirectories in the base path
-    dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
-    
-    # Get the newest directory based on creation time
-    newest_directory = max(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)))
+            # Calculate accuracies for each class
+            accuracies = [100 * class_correct[i] / class_total[i] for i in range(num_classes)]
 
-    # New path = path + newest folder
-    new_path = os.path.join(base_path, newest_directory)
-    
-    # Return paths
-    return os.path.join(new_path, 'images_best.pt'), os.path.join(new_path, 'labels_best.pt')
+            folder_name = f"{args.out_put_path}/ipc{num_of_images}"
+            print(f"Saving images at: {folder_name}")
+
+            if not os.path.exists(folder_name):
+                os.makedirs(folder_name)
+            with open(f'{folder_name}/class_accuracies_{run}.csv', 'w', newline='') as csvfile:
+                csv_writer = csv.writer(csvfile)
+                
+                # Write header
+                csv_writer.writerow(['Class', 'Accuracy'])
+                
+                # Write data
+                for i in range(num_classes):
+                    csv_writer.writerow([class_names[i], accuracies[i]])
+
+
+
+    ###
+
+    def return_images_and_labels(n):
+        # Go to path
+        base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
+        
+        print(f"getting the data from: {base_path}")
+        # List all subdirectories in the base path
+        dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
+        
+        # Get the newest directory based on creation time
+        newest_directory = max(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)))
+
+        # New path = path + newest folder
+        new_path = os.path.join(base_path, newest_directory)
+        
+        # Return paths
+        return os.path.join(new_path, 'images_best.pt'), os.path.join(new_path, 'labels_best.pt')
 
 
 ###
