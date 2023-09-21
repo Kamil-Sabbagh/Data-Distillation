@@ -34,29 +34,42 @@ def main(args, num_of_images):
 
     ''' Train the model '''
     for run in tqdm(range(10)):
-        model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
-        model.train()
-        lr = args.lr_teacher
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-        optimizer.zero_grad()
+       model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
+    model.train()
+    lr = args.lr_teacher
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+    optimizer.zero_grad()
 
-        criterion = nn.CrossEntropyLoss().to(args.device)
-        lr_schedule = [args.train_epochs // 2 + 1]
+    criterion = nn.CrossEntropyLoss().to(args.device)
+    lr_schedule = [args.train_epochs // 2 + 1]
 
-        
+    # Initialize early stopping parameters
+    min_test_loss = float('inf')
+    epochs_no_improve = 0
+    n_iterations = 20  # number of epochs with no improvement after which training will be stopped
 
-        for e in range(args.train_epochs):
-            train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
-                                        criterion=criterion, args=args, aug=True)
+    for e in range(args.train_epochs):
+        train_loss, train_acc = epoch("train", dataloader=trainloader, net=model, optimizer=optimizer,
+                                    criterion=criterion, args=args, aug=True)
 
-            test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
-                                        criterion=criterion, args=args, aug=False)
+        test_loss, test_acc = epoch("test", dataloader=testloader, net=model, optimizer=None,
+                                    criterion=criterion, args=args, aug=False)
 
-            if e in lr_schedule and args.decay:
-                lr *= 0.1
-                teacher_optim = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
-                teacher_optim.zero_grad()
-            #print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
+        # Early stopping logic
+        if test_loss < min_test_loss:
+            min_test_loss = test_loss
+            epochs_no_improve = 0
+        else:
+            epochs_no_improve += 1
+            if epochs_no_improve == n_iterations:
+                print('Early stopping!')
+                break
+
+        if e in lr_schedule and args.decay:
+            lr *= 0.1
+            optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=args.mom, weight_decay=args.l2)
+            optimizer.zero_grad()
+        print("Epoch: {}\tTrain Acc: {} \tTest Acc: {}".format(e, train_acc, test_acc))
 
 
 
