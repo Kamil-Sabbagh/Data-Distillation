@@ -10,6 +10,8 @@ from utils import get_dataset, get_network, get_eval_pool, evaluate_synset
 import copy
 
 def evaluate_synthetic_data(args, image_syn, label_syn):
+    args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
     channel, im_size, num_classes, _, _, _, _, dst_test, testloader, _, _, _ = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
     model_eval_pool = get_eval_pool(args.eval_mode, args.model, args.model)
     eval_it_pool = np.arange(0, args.Iteration + 1, args.eval_it).tolist()
