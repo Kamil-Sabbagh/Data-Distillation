@@ -33,7 +33,7 @@ def main(args, num_of_images):
 
 
     ''' Train the model '''
-    for run in tqdm(range(10)):
+    for run in tqdm(range(1)):
         model = get_network(args.model, channel, num_classes, im_size).to(args.device) 
         model.train()
         lr = args.lr_teacher
