@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.utils
+import argparse
 from tqdm import tqdm
 from utils import get_dataset, get_network, get_eval_pool, evaluate_synset
 import copy
