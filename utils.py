@@ -345,6 +345,7 @@ def get_time():
 def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False, num_classes=0, per_class_acc=False):
     loss_avg, acc_avg, num_exp = 0, 0, 0
     class_acc_avg = [0. for _ in range(num_classes)]
+    class_size = [0. for _ in range(num_classes)]
     net = net.to(args.device)
 
     if args.dataset == "ImageNet":
@@ -389,6 +390,7 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
             ]
             for i in range(num_classes):
                 class_acc_avg[i] += class_acc[i]
+                class_size[i] += lab_np[lab_np == i].shape[0]
 
         loss_avg += loss.item()*n_b
         acc_avg += acc
@@ -403,7 +405,8 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
     loss_avg /= num_exp
     acc_avg /= num_exp
     for i in range(num_classes):
-        class_acc_avg[i] /= num_exp
+        class_acc_avg[i] /= class_size[i]
+        
     if per_class_acc:
         return loss_avg, acc_avg, class_acc_avg
     return loss_avg, acc_avg
