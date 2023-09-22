@@ -6,7 +6,9 @@ import torch.nn.functional as F
 import torchvision.utils
 import argparse
 from tqdm import tqdm
-from utils import get_dataset, get_network, get_eval_pool, evaluate_synset
+from torchvision import transforms
+from utils import get_dataset, get_network, get_eval_pool, evaluate_synset, get_time, DiffAugment, ParamDiffAug
+
 import copy
 
 def evaluate_synthetic_data(args, image_syn, label_syn):
@@ -49,7 +51,12 @@ def return_images_and_labels(n):
     new_path = os.path.join(base_path, newest_directory)
     
     # Return paths
-    return os.path.join(new_path, 'images_best.pt'), os.path.join(new_path, 'labels_best.pt')
+    images = os.path.join(new_path, 'images_best.pt')
+    labels = os.path.join(new_path, 'labels_best.pt')
+    print("loading images and labels from:")
+    print(images)
+    print(labels)
+    return torch.load(images) , torch.load(labels)
 
 
 if __name__ == '__main__':
@@ -119,6 +126,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    if args.dsa:
+        # args.epoch_eval_train = 1000
+        args.dc_aug_param = None
+
+    args.dsa_param = ParamDiffAug()
+
+    dsa_params = args.dsa_param
+    if args.zca:
+        zca_trans = args.zca_trans
+    else:
+        zca_trans = None
     for num_of_images in [1, 10, 50]:
         D_images, D_labes = return_images_and_labels(num_of_images)
         evaluate_synthetic_data(args, D_images, D_labes)
