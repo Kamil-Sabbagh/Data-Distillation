@@ -42,7 +42,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
             print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------' % (len(accs_test), model_eval, acc_test_mean, acc_test_std))
             print(class_acc_all)
 
-            folder_name = f"{args.out_put_path}/ipc{num_of_images}"
+            folder_name = f"./eval_distill_results/ipc{num_of_images}"
             print(f"Saving images at: {folder_name}")
 
             if not os.path.exists(folder_name):
