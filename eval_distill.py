@@ -28,7 +28,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
     class_acc_all = []
 
     for it in eval_it_pool:
-        for model_eval in model_eval_pool:
+        for ind, model_eval in enumerate(model_eval_pool):
             print('-------------------------\nEvaluation\nmodel_train = %s, model_eval = %s, iteration = %d' % (args.model, model_eval, it))
             accs_test = []
             for it_eval in range(args.num_eval):
@@ -47,7 +47,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
 
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
-            with open(f'{folder_name}/class_accuracies.csv', 'w', newline='') as csvfile:
+            with open(f'{folder_name}/class_accuracies_{ind}.csv', 'w', newline='') as csvfile:
                 csv_writer = csv.writer(csvfile)
                 
                 # Write header
