@@ -27,35 +27,34 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
     args.lr_net = syn_lr.item() 
     class_acc_all = []
 
-    for it in eval_it_pool:
-        for ind, model_eval in enumerate(model_eval_pool):
-            print('-------------------------\nEvaluation\nmodel_train = %s, model_eval = %s, iteration = %d' % (args.model, model_eval, it))
-            accs_test = []
-            for it_eval in range(args.num_eval):
-                net_eval = get_network(model_eval, channel, num_classes, im_size).to(args.device)  # get a random model
-                _, _, acc_test, class_acc = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, num_classes=num_classes, per_class_acc=True)
-                accs_test.append(acc_test)
-                class_acc_all.append(class_acc)
-            accs_test = np.array(accs_test)
-            acc_test_mean = np.mean(accs_test)
-            acc_test_std = np.std(accs_test)
-            print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------' % (len(accs_test), model_eval, acc_test_mean, acc_test_std))
-            print(class_acc_all)
+    for model_eval in model_eval_pool:
+        print('-------------------------\nEvaluation\nmodel_train = %s, model_eval = %s' % (args.model, model_eval))
+        accs_test = []
+        for it_eval in range(args.num_eval):
+            net_eval = get_network(model_eval, channel, num_classes, im_size).to(args.device)  # get a random model
+            _, _, acc_test, class_acc = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, num_classes=num_classes, per_class_acc=True)
+            accs_test.append(acc_test)
+            class_acc_all.append(class_acc)
+        accs_test = np.array(accs_test)
+        acc_test_mean = np.mean(accs_test)
+        acc_test_std = np.std(accs_test)
+        print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------' % (len(accs_test), model_eval, acc_test_mean, acc_test_std))
+        print(class_acc_all)
 
-            folder_name = f"./eval_distill_results/ipc{num_of_images}"
-            print(f"Saving images at: {folder_name}")
+        folder_name = f"./eval_distill_results/ipc{num_of_images}"
+        print(f"Saving images at: {folder_name}")
 
-            if not os.path.exists(folder_name):
-                os.makedirs(folder_name)
-            with open(f'{folder_name}/class_accuracies_{ind}.csv', 'w', newline='') as csvfile:
-                csv_writer = csv.writer(csvfile)
-                
-                # Write header
-                csv_writer.writerow(['Model'] + class_names)
-                
-                # Write data
-                for i, row in enumerate(class_acc_all):
-                    csv_writer.writerow([i+1] + row)
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+        with open(f'{folder_name}/class_accuracies_{model_eval}.csv', 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            
+            # Write header
+            csv_writer.writerow(['Model'] + class_names)
+            
+            # Write data
+            for i, row in enumerate(class_acc_all):
+                csv_writer.writerow([i+1] + row)
 
 
 def return_images_and_labels(n):
