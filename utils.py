@@ -382,7 +382,7 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
         loss = criterion(output, lab)
 
         output_np = output.cpu().data.numpy()
-        lab_np = lab.cpu().data.numpy()
+        lab_np =lab.cpu().data.numpy()
         acc = np.sum(np.equal(np.argmax(output_np, axis=-1), lab_np))
         
         if per_class_acc:
@@ -394,9 +394,10 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
                 class_acc_avg[i] += class_acc[i]
                 class_size[i] += lab_np[lab_np == i].shape[0]
 
-        loss_avg += loss.item() * n_b
+        loss_avg += loss.item()*n_b
         acc_avg += acc
         num_exp += n_b
+
 
         if mode == 'train':
             optimizer.zero_grad()
@@ -406,11 +407,12 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
     loss_avg /= num_exp
     acc_avg /= num_exp
     for i in range(num_classes):
-        class_acc_avg[i] /= class_size[i] if class_size[i] != 0 else 1  # To prevent division by zero
+        class_acc_avg[i] /= class_size[i]
         
     if per_class_acc:
         return loss_avg, acc_avg, class_acc_avg
     return loss_avg, acc_avg
+
 
 
 def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, return_loss=False, texture=False, num_classes=0, per_class_acc=False):
@@ -443,7 +445,7 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
         if ep == Epoch:
             with torch.no_grad():
                 # 2. Update these counters after the test epoch
-                loss_test, acc_test, outputs, targets = epoch('test', testloader, net, optimizer, criterion, args, aug=False, return_preds=True)
+                loss_test, acc_test, outputs, targets = epoch('test', testloader, net, optimizer, criterion, args, aug=False, per_class_acc=True)
                 _, predicted = torch.max(outputs, 1)
                 for i in range(num_classes):
                     correct_per_class[i] += predicted[targets==i].eq(targets[targets==i]).sum().item()
@@ -464,7 +466,7 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
     if return_loss:
         return net, acc_train_list, acc_test, loss_train_list, loss_test
     else:
-        return net, acc_train_list, acc_test, class_acc
+        return net, acc_train_list, acc_test
 
 
 def augment(images, dc_aug_param, device):
