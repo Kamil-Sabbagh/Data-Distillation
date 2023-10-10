@@ -342,8 +342,10 @@ def get_time():
     return str(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()))
 
 
-def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False):
+def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False, num_classes=0, per_class_acc=False):
     loss_avg, acc_avg, num_exp = 0, 0, 0
+    class_acc_avg = [0. for _ in range(num_classes)]
+    class_size = [0. for _ in range(num_classes)]
     net = net.to(args.device)
 
     if args.dataset == "ImageNet":
@@ -377,11 +379,23 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False)
         output = net(img)
         loss = criterion(output, lab)
 
-        acc = np.sum(np.equal(np.argmax(output.cpu().data.numpy(), axis=-1), lab.cpu().data.numpy()))
+        output_np = output.cpu().data.numpy()
+        lab_np =lab.cpu().data.numpy()
+        acc = np.sum(np.equal(np.argmax(output_np, axis=-1), lab_np))
+        
+        if per_class_acc:
+            class_acc = [
+                np.sum(np.equal(np.argmax(output_np, axis=-1)[lab_np == class_number], lab_np[lab_np == class_number]))
+                for class_number in range(num_classes)
+            ]
+            for i in range(num_classes):
+                class_acc_avg[i] += class_acc[i]
+                class_size[i] += lab_np[lab_np == i].shape[0]
 
         loss_avg += loss.item()*n_b
         acc_avg += acc
         num_exp += n_b
+
 
         if mode == 'train':
             optimizer.zero_grad()
@@ -390,12 +404,16 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False)
 
     loss_avg /= num_exp
     acc_avg /= num_exp
-
+    for i in range(num_classes):
+        class_acc_avg[i] /= class_size[i]
+        
+    if per_class_acc:
+        return loss_avg, acc_avg, class_acc_avg
     return loss_avg, acc_avg
 
 
 
-def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, return_loss=False, texture=False):
+def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, return_loss=False, texture=False, num_classes=0, per_class_acc=False):
     net = net.to(args.device)
     images_train = images_train.to(args.device)
     labels_train = labels_train.to(args.device)
@@ -446,7 +464,7 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
     if return_loss:
         return net, acc_train_list, acc_test, loss_train_list, loss_test
     else:
-        return net, acc_train_list, acc_test
+        return net, acc_train_list, acc_test, class_acc
 
 
 def augment(images, dc_aug_param, device):
