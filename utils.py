@@ -446,6 +446,7 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
             with torch.no_grad():
                 # 2. Update these counters after the test epoch
                 loss_test, acc_test, targets = epoch('test', testloader, net, optimizer, criterion, args, aug=False, per_class_acc=True)
+                print(targets)
                 targets = torch.tensor(targets)
                 _, predicted = torch.max(targets, 1)
                 for i in range(num_classes):
