@@ -413,13 +413,23 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
     acc_train_list = []
     loss_train_list = []
 
+    # 1. Initialize counters for total samples and correct predictions per class
+    num_classes = len(torch.unique(labels_train))
+    correct_per_class = torch.zeros(num_classes).to(args.device)
+    total_per_class = torch.zeros(num_classes).to(args.device)
+
     for ep in tqdm.tqdm(range(Epoch+1)):
         loss_train, acc_train = epoch('train', trainloader, net, optimizer, criterion, args, aug=True, texture=texture)
         acc_train_list.append(acc_train)
         loss_train_list.append(loss_train)
         if ep == Epoch:
             with torch.no_grad():
-                loss_test, acc_test = epoch('test', testloader, net, optimizer, criterion, args, aug=False)
+                # 2. Update these counters after the test epoch
+                loss_test, acc_test, outputs, targets = epoch('test', testloader, net, optimizer, criterion, args, aug=False, return_preds=True)
+                _, predicted = torch.max(outputs, 1)
+                for i in range(num_classes):
+                    correct_per_class[i] += predicted[targets==i].eq(targets[targets==i]).sum().item()
+                    total_per_class[i] += (targets==i).sum().item()
         if ep in lr_schedule:
             lr *= 0.1
             optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=0.0005)
@@ -428,6 +438,10 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
     time_train = time.time() - start
 
     print('%s Evaluate_%02d: epoch = %04d train time = %d s train loss = %.6f train acc = %.4f, test acc = %.4f' % (get_time(), it_eval, Epoch, int(time_train), loss_train, acc_train, acc_test))
+
+    # 3. Compute class-wise accuracies using the updated counters
+    class_accuracies = (correct_per_class / total_per_class).cpu().numpy()
+    print(class_accuracies)
 
     if return_loss:
         return net, acc_train_list, acc_test, loss_train_list, loss_test
