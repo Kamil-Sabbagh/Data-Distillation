@@ -26,14 +26,16 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
     syn_lr = syn_lr.detach().to(args.device).requires_grad_(True)
     args.lr_net = syn_lr.item() 
     class_acc_all = []
-
+    class_wise 
     for model_eval in model_eval_pool:
         print('-------------------------\nEvaluation\nmodel_train = %s, model_eval = %s' % (args.model, model_eval))
         accs_test = []
         for it_eval in range(args.num_eval):
             net_eval = get_network(model_eval, channel, num_classes, im_size).to(args.device)  # get a random model
             _, _, acc_test = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, per_class_acc=True)
+            print("acc_test = ", acc_test)
             accs_test.append(acc_test)
+            class_acc_all.append(acc_test)
         accs_test = np.array(accs_test)
         acc_test_mean = np.mean(accs_test)
         acc_test_std = np.std(accs_test)
