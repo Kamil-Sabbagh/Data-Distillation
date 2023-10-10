@@ -32,14 +32,13 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
         accs_test = []
         for it_eval in range(args.num_eval):
             net_eval = get_network(model_eval, channel, num_classes, im_size).to(args.device)  # get a random model
-            _, _, acc_test, class_acc = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, num_classes=num_classes, per_class_acc=True)
+            _, _, acc_test = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, per_class_acc=True)
             accs_test.append(acc_test)
-            class_acc_all.append(class_acc)
         accs_test = np.array(accs_test)
         acc_test_mean = np.mean(accs_test)
         acc_test_std = np.std(accs_test)
         print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------' % (len(accs_test), model_eval, acc_test_mean, acc_test_std))
-        print(class_acc_all)
+        
 
         folder_name = f"./eval_distill_results/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
