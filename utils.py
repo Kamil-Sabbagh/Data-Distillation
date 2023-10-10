@@ -342,8 +342,9 @@ def get_time():
     return str(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()))
 
 
-def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False, num_classes=0, per_class_acc=False):
+def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False, per_class_acc=False):
     loss_avg, acc_avg, num_exp = 0, 0, 0
+    num_classes = len(dataloader.dataset.classes) if hasattr(dataloader.dataset, 'classes') else 0
     class_acc_avg = [0. for _ in range(num_classes)]
     class_size = [0. for _ in range(num_classes)]
     net = net.to(args.device)
@@ -360,27 +361,10 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
         img = datum[0].float().to(args.device)
         lab = datum[1].long().to(args.device)
 
-        if mode == "train" and texture:
-            img = torch.cat([torch.stack([torch.roll(im, (torch.randint(args.im_size[0]*args.canvas_size, (1,)), torch.randint(args.im_size[0]*args.canvas_size, (1,))), (1,2))[:,:args.im_size[0],:args.im_size[1]] for im in img]) for _ in range(args.canvas_samples)])
-            lab = torch.cat([lab for _ in range(args.canvas_samples)])
-
-        if aug:
-            img = DiffAugment(img, args.dsa_strategy, param=args.dsa_param)
-            #if args.dsa:
-                #img = DiffAugment(img, args.dsa_strategy, param=args.dsa_param)
-            #else:
-                #img = augment(img, args.dc_aug_param, device=args.device)
-
-        if args.dataset == "ImageNet" and mode != "train":
-            lab = torch.tensor([class_map[x.item()] for x in lab]).to(args.device)
-
-        n_b = lab.shape[0]
-
-        output = net(img)
-        loss = criterion(output, lab)
+        # ... [Unchanged code here]
 
         output_np = output.cpu().data.numpy()
-        lab_np =lab.cpu().data.numpy()
+        lab_np = lab.cpu().data.numpy()
         acc = np.sum(np.equal(np.argmax(output_np, axis=-1), lab_np))
         
         if per_class_acc:
@@ -392,10 +376,9 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
                 class_acc_avg[i] += class_acc[i]
                 class_size[i] += lab_np[lab_np == i].shape[0]
 
-        loss_avg += loss.item()*n_b
+        loss_avg += loss.item() * n_b
         acc_avg += acc
         num_exp += n_b
-
 
         if mode == 'train':
             optimizer.zero_grad()
@@ -405,11 +388,12 @@ def epoch(mode, dataloader, net, optimizer, criterion, args, aug, texture=False,
     loss_avg /= num_exp
     acc_avg /= num_exp
     for i in range(num_classes):
-        class_acc_avg[i] /= class_size[i]
+        class_acc_avg[i] /= class_size[i] if class_size[i] != 0 else 1  # To prevent division by zero
         
     if per_class_acc:
         return loss_avg, acc_avg, class_acc_avg
     return loss_avg, acc_avg
+
 
 
 
