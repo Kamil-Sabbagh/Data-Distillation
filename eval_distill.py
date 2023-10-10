@@ -25,8 +25,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
     syn_lr = torch.tensor(args.lr_teacher).to(args.device)
     syn_lr = syn_lr.detach().to(args.device).requires_grad_(True)
     args.lr_net = syn_lr.item() 
-    class_acc_all = []
-    class_wise 
+    class_acc_all = [] 
     for model_eval in model_eval_pool:
         print('-------------------------\nEvaluation\nmodel_train = %s, model_eval = %s' % (args.model, model_eval))
         accs_test = []
