@@ -14,9 +14,8 @@ import copy
 def evaluate_synthetic_data(args, image_syn, label_syn):
     args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    channel, im_size, num_classes, class_names, _, _, _, dst_test, testloader, _, _, _ = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
+    channel, im_size, num_classes, class_names, _, _, _, _, testloader, _, _, _ = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
     model_eval_pool = get_eval_pool(args.eval_mode, args.model, args.model)
-    eval_it_pool = np.arange(0, args.Iteration + 1, args.eval_it).tolist()
 
     accs_all_exps = dict()  # record performances of all experiments
     for key in model_eval_pool:
@@ -41,7 +40,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
         print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------' % (len(accs_test), model_eval, acc_test_mean, acc_test_std))
         
 
-        folder_name = f"./eval_distill_results/ipc{num_of_images}"
+        folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
         if not os.path.exists(folder_name):
@@ -59,7 +58,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn):
 
 def return_images_and_labels(n):
     # Go to path
-    base_path = f'./logged_files/{args.logged_images_path}/ipc{n}/CIFAR10/'
+    base_path = f'./{args.logged_images_path}/ipc{n}/CIFAR10/'
     
     print(f"getting the data from: {base_path}")
     # List all subdirectories in the base path
@@ -160,4 +159,4 @@ if __name__ == '__main__':
         zca_trans = None
     for num_of_images in [1, 10, 50]:
         D_images, D_labes = return_images_and_labels(num_of_images)
-        evaluate_synthetic_data(args, D_images, D_labes)
+        evaluate_synthetic_data(args, D_images, D_labes, num_of_images)
