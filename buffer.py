@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
 
 #python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --num_experts=100 --zca --buffer_path=cifar-10-buffer --data_path=cifar-10-python --second_half_images=2500
-#python3 distill.py --dataset=CIFAR10 --ipc=50 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer --data_path=cifar-10-python
+#python3 distill.py --dataset=CIFAR10 --ipc=50 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --buffer_path=cifar-10-buffer/Fair --data_path=cifar-10-python
 #python3 get_accuracy.py --DD_files=True 
 #python3 stats.py
 
