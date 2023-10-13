@@ -182,8 +182,12 @@ def main(args, num_of_images):
 
     best_std = {m: 0 for m in model_eval_pool}
 
+    acc_train = 0
     for it in range(0, args.Iteration+1):
         save_this_it = False
+        if acc_train == 1:
+            print("model converged")
+            break
 
         # writer.add_scalar('Progress', it, it)
         wandb.log({"Progress": it}, step=it)
@@ -224,6 +228,7 @@ def main(args, num_of_images):
                 wandb.log({'Max_Accuracy/{}'.format(model_eval): best_acc[model_eval]}, step=it)
                 wandb.log({'Std/{}'.format(model_eval): acc_test_std}, step=it)
                 wandb.log({'Max_Std/{}'.format(model_eval): best_std[model_eval]}, step=it)
+
 
 
         if it in eval_it_pool and (save_this_it or it % 1000 == 0):
@@ -426,7 +431,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_it', type=int, default=100, help='how often to evaluate')
 
     parser.add_argument('--epoch_eval_train', type=int, default=1000, help='epochs to train a model with synthetic data')
-    parser.add_argument('--Iteration', type=int, default=5000, help='how many distillation steps to perform')
+    parser.add_argument('--Iteration', type=int, default=1000, help='how many distillation steps to perform')
 
     parser.add_argument('--lr_img', type=float, default=1000, help='learning rate for updating synthetic images')
     parser.add_argument('--lr_lr', type=float, default=1e-05, help='learning rate for updating... learning rate')
