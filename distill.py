@@ -235,7 +235,7 @@ def main(args, num_of_images):
             with torch.no_grad():
                 image_save = image_syn.cuda()
 
-                save_dir = os.path.join(".", f"{args.save_path}/ipc{n}/", args.dataset, wandb.run.name)
+                save_dir = os.path.join(".", f"{args.save_path}/ipc{num_of_images}/", args.dataset, wandb.run.name)
                 print(f"Saving the images & labels in {save_dir}")
 
                 if not os.path.exists(save_dir):
