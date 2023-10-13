@@ -45,6 +45,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
 
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
+        print(f"saving the average accuracy in : {folder_name}/class_accuracies_{model_eval}.csv")
         with open(f'{folder_name}/class_accuracies_{model_eval}.csv', 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_mode', type=str, default='S',
                         help='eval_mode, check utils.py for more info')
 
-    parser.add_argument('--num_eval', type=int, default=5, help='how many networks to evaluate on')
+    parser.add_argument('--num_eval', type=int, default=1000, help='how many networks to evaluate on')
 
     parser.add_argument('--eval_it', type=int, default=100, help='how often to evaluate')
 
