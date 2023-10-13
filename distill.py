@@ -236,6 +236,7 @@ def main(args, num_of_images):
                 image_save = image_syn.cuda()
 
                 save_dir = os.path.join(".", f"{args.save_path}/ipc{n}/", args.dataset, wandb.run.name)
+                print(f"Saving the images & labels in {save_dir}")
 
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
@@ -478,7 +479,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    for num_of_images in [1, 10, 50]:
+    for num_of_images in [50]:
         args.ipc = num_of_images
         main(args, num_of_images)
 
