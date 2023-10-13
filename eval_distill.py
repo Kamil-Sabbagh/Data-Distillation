@@ -11,7 +11,7 @@ from utils import get_dataset, get_network, get_eval_pool, evaluate_synset, get_
 import csv
 import copy
 
-def evaluate_synthetic_data(args, image_syn, label_syn):
+def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
     args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     channel, im_size, num_classes, class_names, _, _, _, _, testloader, _, _, _ = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
