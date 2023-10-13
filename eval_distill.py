@@ -94,7 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_mode', type=str, default='S',
                         help='eval_mode, check utils.py for more info')
 
-    parser.add_argument('--num_eval', type=int, default=1000, help='how many networks to evaluate on')
+    parser.add_argument('--num_eval', type=int, default=15, help='how many networks to evaluate on')
 
     parser.add_argument('--eval_it', type=int, default=100, help='how often to evaluate')
 
