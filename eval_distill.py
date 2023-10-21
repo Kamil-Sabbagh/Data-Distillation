@@ -158,6 +158,6 @@ if __name__ == '__main__':
         zca_trans = args.zca_trans
     else:
         zca_trans = None
-    for num_of_images in [1, 10, 50]:
+    for num_of_images in [25]:
         D_images, D_labes = return_images_and_labels(num_of_images)
         evaluate_synthetic_data(args, D_images, D_labes, num_of_images)
