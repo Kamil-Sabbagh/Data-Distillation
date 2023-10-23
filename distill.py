@@ -182,7 +182,10 @@ def main(args, num_of_images):
 
     best_std = {m: 0 for m in model_eval_pool}
 
-    acc_train = 0
+    acc_train = 0  
+    patience_counter = 0
+    early_stopping_patience = 50  # You can adjust this value as needed
+    best_loss = float('inf')
     for it in range(0, args.Iteration+1):
         save_this_it = False
         if acc_train == 1:
@@ -409,6 +412,17 @@ def main(args, num_of_images):
 
         if it%10 == 0:
             print('%s iter = %04d, loss = %.4f' % (get_time(), it, grand_loss.item()))
+        
+        if grand_loss.item() < best_loss:
+            best_loss = grand_loss.item()
+            patience_counter = 0
+        else:
+            patience_counter += 1
+
+        # Early stopping condition
+        if patience_counter >= early_stopping_patience:
+            print("Early stopping triggered at iteration:", it)
+            break
 
     wandb.finish()
 
@@ -432,7 +446,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_it', type=int, default=100, help='how often to evaluate')
 
     parser.add_argument('--epoch_eval_train', type=int, default=1000, help='epochs to train a model with synthetic data')
-    parser.add_argument('--Iteration', type=int, default=1000, help='how many distillation steps to perform')
+    parser.add_argument('--Iteration', type=int, default=5000, help='how many distillation steps to perform')
 
     parser.add_argument('--lr_img', type=float, default=1000, help='learning rate for updating synthetic images')
     parser.add_argument('--lr_lr', type=float, default=1e-05, help='learning rate for updating... learning rate')
