@@ -55,6 +55,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
             # Write data
             for i, row in enumerate(class_acc_all):
                 csv_writer.writerow([i+1] + row)
+    return acc_test_mean
 
 
 def return_images_and_labels(n):
@@ -65,19 +66,25 @@ def return_images_and_labels(n):
     # List all subdirectories in the base path
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     
-    # Get the newest directory based on creation time
-    newest_directory = max(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)))
+    # Get the 10 newest directories based on creation time
+    newest_directories = sorted(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)), reverse=True)[:10]
 
-    # New path = path + newest folder
-    new_path = os.path.join(base_path, newest_directory)
+    image_label_pairs = []
+    for newest_directory in newest_directories:
+        # New path = path + newest folder
+        new_path = os.path.join(base_path, newest_directory)
+        
+        # Return paths
+        images = os.path.join(new_path, 'images_best.pt')
+        labels = os.path.join(new_path, 'labels_best.pt')
+        print("loading images and labels from:")
+        print(images)
+        print(labels)
+        
+        image_label_pairs.append((torch.load(images), torch.load(labels)))
     
-    # Return paths
-    images = os.path.join(new_path, 'images_best.pt')
-    labels = os.path.join(new_path, 'labels_best.pt')
-    print("loading images and labels from:")
-    print(images)
-    print(labels)
-    return torch.load(images) , torch.load(labels)
+    return image_label_pairs
+
 
 
 if __name__ == '__main__':
@@ -158,6 +165,13 @@ if __name__ == '__main__':
         zca_trans = args.zca_trans
     else:
         zca_trans = None
-    for num_of_images in [25]:
-        D_images, D_labes = return_images_and_labels(num_of_images)
-        evaluate_synthetic_data(args, D_images, D_labes, num_of_images)
+    for num_of_images in [1, 10, 20, 30]:
+        image_label_pairs = return_images_and_labels(num_of_images)
+        accs = []
+        for D_images, D_labels in image_label_pairs:
+            acc = evaluate_synthetic_data(args, D_images, D_labels, num_of_images)
+            accs.append(acc)
+        
+        avg_acc = np.mean(accs)
+        print(f"Average accuracy over the 10 newest models: {avg_acc:.4f}")
+

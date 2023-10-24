@@ -188,9 +188,6 @@ def main(args, num_of_images):
     best_loss = float('inf')
     for it in range(0, args.Iteration+1):
         save_this_it = False
-        if acc_train == 1:
-            print("model converged")
-            break
 
         # writer.add_scalar('Progress', it, it)
         wandb.log({"Progress": it}, step=it)
