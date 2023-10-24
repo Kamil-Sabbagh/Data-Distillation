@@ -184,7 +184,7 @@ def main(args, num_of_images):
 
     acc_train = 0  
     patience_counter = 0
-    early_stopping_patience = 50  # You can adjust this value as needed
+    early_stopping_patience = 500  # You can adjust this value as needed
     best_loss = float('inf')
     for it in range(0, args.Iteration+1):
         save_this_it = False
