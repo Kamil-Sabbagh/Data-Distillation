@@ -53,7 +53,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode
             csv_writer.writerow(['Model'] + class_names)
             
             # Write data
-            for i, row in enumerate(class_acc_all):
+            for i, row in enumerate(CWAcc):
                 csv_writer.writerow([i+1] + row)
 
     print("Class_acc_all: ", CWAcc)
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     else:
         zca_trans = None
     
-    for num_of_images in [1, 10, 20]:
+    for num_of_images in [20]:
         folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
