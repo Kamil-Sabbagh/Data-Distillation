@@ -55,6 +55,8 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode
             # Write data
             for i, row in enumerate(class_acc_all):
                 csv_writer.writerow([i+1] + row)
+
+    print("Class_acc_all: ")
     return class_acc_all
 
 
