@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 #import matplotlib.pyplot as plt
 
 # List of paths to your CSV files
@@ -13,7 +14,9 @@ averages = []
 # Iterate through each file path
 for path in file_paths:
     # Read the CSV file into a DataFrame
-    df = pd.read_csv(path, header=None)
+    print(path)
+    print(os.path.exists(path))
+    df = pd.read_csv(path)
     
     # Calculate the average of each row and append to averages list
     avg = df.mean(axis=1).tolist()
