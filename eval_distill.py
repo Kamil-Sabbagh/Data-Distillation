@@ -69,7 +69,7 @@ def return_images_and_labels(n):
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     
     # Get the 10 newest directories based on creation time
-    newest_directories = sorted(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)), reverse=True)[:2]
+    newest_directories = sorted(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)), reverse=True)[:10]
 
     image_label_pairs = []
     for newest_directory in newest_directories:
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     else:
         zca_trans = None
     
-    for num_of_images in [20]:
+    for num_of_images in [1, 10, 20]:
         folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
