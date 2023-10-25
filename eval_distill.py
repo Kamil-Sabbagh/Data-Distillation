@@ -50,11 +50,11 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode
             csv_writer = csv.writer(csvfile)
             
             # Write header
-            csv_writer.writerow(['Model'] + class_names)
+            if file_mode == 'w':
+                csv_writer.writerow(['Model'] + class_names)
             
             # Write data
-            for i, row in enumerate(CWAcc):
-                csv_writer.writerow([i+1] + row)
+            csv_writer.writerow(CWAcc)
 
     print("Class_acc_all: ", CWAcc)
     return CWAcc
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_mode', type=str, default='S',
                         help='eval_mode, check utils.py for more info')
 
-    parser.add_argument('--num_eval', type=int, default=15, help='how many networks to evaluate on')
+    parser.add_argument('--num_eval', type=int, default=10, help='how many networks to evaluate on')
 
     parser.add_argument('--eval_it', type=int, default=100, help='how often to evaluate')
 
