@@ -11,7 +11,7 @@ from utils import get_dataset, get_network, get_eval_pool, evaluate_synset, get_
 import csv
 import copy
 
-def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
+def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode):
     args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     channel, im_size, num_classes, class_names, _, _, _, _, testloader, _, _, _ = get_dataset(args.dataset, args.data_path, args.batch_real, args.subset, args=args)
@@ -46,7 +46,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         print(f"saving the average accuracy in : {folder_name}/class_accuracies_{model_eval}.csv")
-        with open(f'{folder_name}/class_accuracies_{model_eval}.csv', 'w', newline='') as csvfile:
+        with open(f'{folder_name}/class_accuracies_{model_eval}.csv', file_mode, newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             
             # Write header
@@ -55,7 +55,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images):
             # Write data
             for i, row in enumerate(class_acc_all):
                 csv_writer.writerow([i+1] + row)
-    return acc_test_mean
+    return class_acc_all
 
 
 def return_images_and_labels(n):
@@ -67,7 +67,7 @@ def return_images_and_labels(n):
     dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     
     # Get the 10 newest directories based on creation time
-    newest_directories = sorted(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)), reverse=True)[:10]
+    newest_directories = sorted(dirs, key=lambda d: os.path.getctime(os.path.join(base_path, d)), reverse=True)[:2]
 
     image_label_pairs = []
     for newest_directory in newest_directories:
@@ -165,13 +165,33 @@ if __name__ == '__main__':
         zca_trans = args.zca_trans
     else:
         zca_trans = None
-    for num_of_images in [30]:
+    
+    for num_of_images in [1, 10, 20]:
+        folder_name = f".{args.save_path}/ipc{num_of_images}"
+        print(f"Saving images at: {folder_name}")
+
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+
+        csv_file_path = f'{folder_name}/class_accuracies_{num_of_images}.csv'
+        print(f"saving the average accuracy in : {csv_file_path}")
+
         image_label_pairs = return_images_and_labels(num_of_images)
-        accs = []
+        all_class_accuracies = []  # List to store per-class accuracies for each run
+        file_mode = 'w'
         for D_images, D_labels in image_label_pairs:
-            acc = evaluate_synthetic_data(args, D_images, D_labels, num_of_images)
-            accs.append(acc)
+            class_accuracies = evaluate_synthetic_data(args, D_images, D_labels, num_of_images, file_mode)
+            file_mode = 'a'
+            all_class_accuracies.append(class_accuracies)
         
-        avg_acc = np.mean(accs)
-        print(f"Average accuracy over the 10 newest models: {avg_acc:.4f}")
+        # Convert to numpy array for easier averaging
+        all_class_accuracies = np.array(all_class_accuracies)
+        
+        avg_class_accuracies = np.mean(all_class_accuracies, axis=0)
+        std_class_accuracies = np.std(all_class_accuracies, axis=0)
+        
+        # Print out the average and standard deviation per class
+        for i, (avg_acc, std_acc) in enumerate(zip(avg_class_accuracies, std_class_accuracies)):
+            print(f"Class {i} - Average accuracy: {avg_acc:.4f}, Standard deviation: {std_acc:.4f}")
+
 
