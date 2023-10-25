@@ -58,7 +58,7 @@ def main(args, num_of_images):
         zca_trans = None
 
     wandb.init(sync_tensorboard=False,
-               project="DatasetDistillation",
+               project="DatasetDistillation2",
                job_type="CleanRepo",
                config=args,
                )
@@ -212,7 +212,7 @@ def main(args, num_of_images):
                     image_syn_eval, label_syn_eval = copy.deepcopy(image_save.detach()), copy.deepcopy(eval_labs.detach()) # avoid any unaware modification
 
                     args.lr_net = syn_lr.item()
-                    _, acc_train, acc_test = evaluate_synset(it_eval, net_eval, image_syn_eval, label_syn_eval, testloader, args, texture=args.texture)
+                    _, acc_train, acc_test, _= evaluate_synset(it_eval, net_eval, image_syn_eval, label_syn_eval, testloader, args, texture=args.texture)
                     accs_test.append(acc_test)
                     accs_train.append(acc_train)
                 accs_test = np.array(accs_test)
@@ -490,7 +490,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    for num_of_images in [1, 10, 20, 30]:
+    for num_of_images in [30]:
         for _ in range(10):
             args.ipc = num_of_images
             main(args, num_of_images)
