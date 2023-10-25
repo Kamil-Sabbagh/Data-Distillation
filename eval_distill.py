@@ -165,7 +165,7 @@ if __name__ == '__main__':
         zca_trans = args.zca_trans
     else:
         zca_trans = None
-    for num_of_images in [1, 10, 20, 30]:
+    for num_of_images in [1, 10, 20]:
         image_label_pairs = return_images_and_labels(num_of_images)
         accs = []
         for D_images, D_labels in image_label_pairs:
