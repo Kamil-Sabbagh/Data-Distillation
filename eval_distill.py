@@ -179,7 +179,7 @@ if __name__ == '__main__':
         image_label_pairs = return_images_and_labels(num_of_images)
         all_class_accuracies = []  # List to store per-class accuracies for each run
         file_mode = 'w'
-        for D_images, D_labels in image_label_pairs:
+        for D_images, D_labels in tqdm(image_label_pairs):
             class_accuracies = evaluate_synthetic_data(args, D_images, D_labels, num_of_images, file_mode)
             file_mode = 'a'
             all_class_accuracies.append(class_accuracies)
