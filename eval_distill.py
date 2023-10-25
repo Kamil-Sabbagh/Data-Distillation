@@ -30,7 +30,7 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode
         accs_test = []
         for it_eval in range(args.num_eval):
             net_eval = get_network(model_eval, channel, num_classes, im_size).to(args.device)  # get a random model
-            _, _, acc_test = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, per_class_acc=True)
+            _, _, acc_test, CWAcc = evaluate_synset(it_eval, net_eval, image_syn, label_syn, testloader, args, texture=args.texture, per_class_acc=True)
             print("acc_test = ", acc_test)
             accs_test.append(acc_test)
             class_acc_all.append(acc_test)
@@ -56,8 +56,8 @@ def evaluate_synthetic_data(args, image_syn, label_syn, num_of_images, file_mode
             for i, row in enumerate(class_acc_all):
                 csv_writer.writerow([i+1] + row)
 
-    print("Class_acc_all: ")
-    return class_acc_all
+    print("Class_acc_all: ", CWAcc)
+    return CWAcc
 
 
 def return_images_and_labels(n):

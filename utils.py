@@ -454,9 +454,9 @@ def evaluate_synset(it_eval, net, images_train, labels_train, testloader, args, 
     print(class_acc_avg)
     
     if return_loss:
-        return net, acc_train_list, acc_test, loss_train_list, loss_test
+        return net, acc_train_list, acc_test, loss_train_list, loss_test, class_acc_avg
     else:
-        return net, acc_train_list, acc_test
+        return net, acc_train_list, acc_test, class_acc_avg
 
 
 def augment(images, dc_aug_param, device):
