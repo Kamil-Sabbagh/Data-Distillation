@@ -17,6 +17,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 def main(args, num_of_images):
 
+    torch.cuda.empty_cache()
+
     if args.zca and args.texture:
         raise AssertionError("Cannot use zca and texture together")
 
