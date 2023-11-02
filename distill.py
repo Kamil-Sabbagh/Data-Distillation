@@ -60,7 +60,7 @@ def main(args, num_of_images):
         zca_trans = None
 
     wandb.init(sync_tensorboard=False,
-               project="DatasetDistillation2",
+               project="Data_Distillation_3",
                job_type="CleanRepo",
                config=args,
                )
@@ -492,7 +492,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    for num_of_images in [10, 20, 30, 40, 50]:
+    for num_of_images in [1, 10, 20, 30, 40, 50]:
         for _ in range(10):
             args.ipc = num_of_images
             main(args, num_of_images)
