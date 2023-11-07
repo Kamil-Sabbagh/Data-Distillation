@@ -372,8 +372,11 @@ def main(args, num_of_images):
                 forward_params = student_params[-1]
             x = student_net(x, flat_param=forward_params)
             ce_loss = criterion(x, this_y)
+            
+            torch.cuda.empty_cache()
+            grad = torch.autograd.grad(ce_loss, student_params[-1].half(), create_graph=True)[0]
+            grad = grad.float()
 
-            grad = torch.autograd.grad(ce_loss, student_params[-1], create_graph=True)[0]
 
             student_params.append(student_params[-1] - syn_lr * grad)
 
