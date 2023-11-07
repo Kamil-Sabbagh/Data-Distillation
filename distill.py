@@ -453,9 +453,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--lr_init', type=float, default=0.01, help='how to init lr (alpha)')
 
-    parser.add_argument('--batch_real', type=int, default=8, help='batch size for real data')
+    parser.add_argument('--batch_real', type=int, default=64, help='batch size for real data')
     parser.add_argument('--batch_syn', type=int, default=None, help='should only use this if you run out of VRAM')
-    parser.add_argument('--batch_train', type=int, default=8, help='batch size for training networks')
+    parser.add_argument('--batch_train', type=int, default=64, help='batch size for training networks')
 
     parser.add_argument('--pix_init', type=str, default='real', choices=["noise", "real"],
                         help='noise/real: initialize synthetic images from random noise or randomly sampled real images.')
