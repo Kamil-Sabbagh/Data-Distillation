@@ -374,7 +374,8 @@ def main(args, num_of_images):
             ce_loss = criterion(x, this_y)
             
             torch.cuda.empty_cache()
-            grad = torch.autograd.grad(ce_loss, student_params[-1].half(), create_graph=True)[0]
+            student_params[-1].data = student_params[-1].data.half()
+            grad = torch.autograd.grad(ce_loss, student_params[-1].half(), create_graph=True, allow_unused=True)[0]
             grad = grad.float()
 
 
