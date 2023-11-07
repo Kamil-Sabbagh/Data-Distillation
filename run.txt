@@ -9,8 +9,7 @@ python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --zca --b
 --data_path=cifar-10-python --num_experts=100 --second_half_images=5000
 
 
-python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca
---lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer --force_save --save_path=normal_run
+python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer --force_save --save_path=normal_run
 
 
 python3 get_accuracy.py --out_put_path=normal_model_equal_representaion
@@ -29,8 +28,7 @@ python3 buffer.py --dataset=CIFAR10 --model=ConvNet --train_epochs=100 --zca --b
 --data_path=cifar-10-python --num_experts=100 --second_half_images=2500
 
 
-python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca
---lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer-not-equal-represented --force_save --save_path=not_equal_run
+python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer-not-equal-represented --force_save --save_path=not_equal_run
 
 
 python3 get_accuracy.py --second_half_images=2500 --out_put_path=normal_model_unequal_representaion
@@ -39,3 +37,7 @@ python3 get_accuracy.py --second_half_images=2500 --out_put_path=normal_model_un
 python3 get_accuracy.py --DD_files=True --logged_images_path=not_equal_run --second_half_images=2500 --out_put_path=distilled_model_unequal_representaion
 
 -----------------------------------------------------------------------------------
+
+testing with batch size 64 instead of 256  
+
+python3 distill.py --dataset=CIFAR10 --syn_steps=20 --expert_epochs=3 --max_start_epoch=20 --zca --lr_img=1000 --lr_lr=1e-05 --lr_teacher=0.01 --data_path=cifar-10-python --buffer_path=cifar-10-buffer --force_save --save_path=Results/ConvNet 
