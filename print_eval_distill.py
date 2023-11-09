@@ -5,11 +5,15 @@ import os
 # List of paths to your CSV files
 file_paths = [
     "./ipc1/class_accuracies_ConvNet.csv",
+    "./ipc5/class_accuracies_ConvNet.csv",
     "./ipc10/class_accuracies_ConvNet.csv",
-    "./ipc20/class_accuracies_ConvNet.csv"
+    "./ipc15/class_accuracies_ConvNet.csv",
+    "./ipc20/class_accuracies_ConvNet.csv",
+    "./ipc25/class_accuracies_ConvNet.csv",
+    "./ipc30/class_accuracies_ConvNet.csv"
 ]
 
-averages = []
+data = []
 
 # Iterate through each file path
 for path in file_paths:
@@ -20,7 +24,7 @@ for path in file_paths:
     
     # Calculate the average of each row and append to averages list
     avg = df.mean(axis=1).tolist()
-    averages.append(avg)
+    data.append(avg)
 
     # Print the average of each row for the current CSV file
     print(f"{path} average is:")
