@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import argparse
 
 # List of paths to your CSV files
 file_paths = [
@@ -13,8 +14,13 @@ file_paths = [
     "./ipc30/class_accuracies_ConvNet.csv"
 ]
 
-# Define a threshold for detecting outliers
-std_dev_threshold = 2  # for example, any data point more than 2 standard deviations
+# Set up argument parser
+parser = argparse.ArgumentParser(description='Process CSV files and output statistics.')
+parser.add_argument('--std_threshold', type=float, default=2, help='Standard deviation threshold for outlier detection')
+
+# Parse arguments
+args = parser.parse_args()
+std_dev_threshold = args.std_threshold
 
 # Initialize lists to hold IPC numbers and accuracy data
 ipc_numbers = []
