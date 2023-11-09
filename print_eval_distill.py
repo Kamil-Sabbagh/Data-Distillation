@@ -2,12 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 
-# Define the class names if they are not present in the CSV file
-class_names = [
-    'airplane', 'automobile', 'bird', 'cat', 'deer', 
-    'dog', 'frog', 'horse', 'ship', 'truck'
-]
-
 # List of paths to your CSV files
 file_paths = [
     "./ipc1/class_accuracies_ConvNet.csv",
@@ -29,8 +23,14 @@ for path in file_paths:
         print(f"File not found: {path}")
         continue
 
-    # Read the CSV file into a DataFrame, assuming no header is present
-    df = pd.read_csv(path, header=None, names=class_names)
+    # Read the CSV file into a DataFrame, using the first row as the header
+    df = pd.read_csv(path)
+
+    # Swap 'Model' data with 'truck' data
+    df['Model'], df['truck'] = df['truck'], df['Model']
+    
+    # Now drop the 'Model' column as it's no longer needed
+    df = df.drop(columns=['Model'])
     
     # Calculate the mean and standard deviation for each class
     means = df.mean()
