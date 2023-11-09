@@ -173,7 +173,7 @@ if __name__ == '__main__':
     else:
         zca_trans = None
     
-    for num_of_images in [1, 5, 10, 15, 20, 25, 30]:
+    for num_of_images in [5, 15, 25]:
         folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
@@ -184,24 +184,24 @@ if __name__ == '__main__':
         print(f"saving the average accuracy in : {csv_file_path}")
 
         image_label_pairs = return_images_and_labels(num_of_images)
-        all_class_accuracies = []  # List to store per-class accuracies for each run
+        #all_class_accuracies = []  # List to store per-class accuracies for each run
         file_mode = 'w'
         for D_images, D_labels in tqdm(image_label_pairs):
             class_accuracies = evaluate_synthetic_data(args, D_images, D_labels, num_of_images, file_mode)
             file_mode = 'a'
-            all_class_accuracies.append(class_accuracies)
+            #all_class_accuracies.append(class_accuracies)
         
         # Convert to numpy array for easier averaging
-        all_class_accuracies = np.array(all_class_accuracies)
+        #all_class_accuracies = np.array(all_class_accuracies)
         
-        avg_class_accuracies = np.mean(all_class_accuracies, axis=0)
-        var_class_accuracies = np.var(all_class_accuracies, axis=0)
-        std_class_accuracies = np.std(all_class_accuracies, axis=0)
+        #avg_class_accuracies = np.mean(all_class_accuracies, axis=0)
+        #var_class_accuracies = np.var(all_class_accuracies, axis=0)
+        #std_class_accuracies = np.std(all_class_accuracies, axis=0)
 
         #avg_class_accuracies = ([test for test in avg_class_accuracies if reject_outliers(test, avg_class_accuracies, std_class_accuracies)])
         
         # Print out the average and standard deviation per class
-        for i, (avg_acc, std_acc) in enumerate(zip(avg_class_accuracies, std_class_accuracies)):
-            print(f"Class {i} - Average accuracy: {avg_acc:.4f}, Standard deviation: {std_acc:.4f}")
+        #for i, (avg_acc, std_acc) in enumerate(zip(avg_class_accuracies, std_class_accuracies)):
+            #print(f"Class {i} - Average accuracy: {avg_acc:.4f}, Standard deviation: {std_acc:.4f}")
 
 
