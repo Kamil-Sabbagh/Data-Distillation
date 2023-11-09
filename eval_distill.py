@@ -88,6 +88,11 @@ def return_images_and_labels(n):
     return image_label_pairs
 
 
+def reject_outliers(data, mean, std, m=2):
+    if abs(data - mean) < m * std:
+        return data
+    return None
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parameter Processing')
@@ -168,7 +173,7 @@ if __name__ == '__main__':
     else:
         zca_trans = None
     
-    for num_of_images in [1, 10, 20, 30]:
+    for num_of_images in [1, 5, 10, 15, 20, 25, 30]:
         folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
@@ -190,7 +195,10 @@ if __name__ == '__main__':
         all_class_accuracies = np.array(all_class_accuracies)
         
         avg_class_accuracies = np.mean(all_class_accuracies, axis=0)
+        var_class_accuracies = np.var(all_class_accuracies, axis=0)
         std_class_accuracies = np.std(all_class_accuracies, axis=0)
+
+        #avg_class_accuracies = ([test for test in avg_class_accuracies if reject_outliers(test, avg_class_accuracies, std_class_accuracies)])
         
         # Print out the average and standard deviation per class
         for i, (avg_acc, std_acc) in enumerate(zip(avg_class_accuracies, std_class_accuracies)):
