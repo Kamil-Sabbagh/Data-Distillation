@@ -16,8 +16,16 @@ file_paths = [
 # Define a threshold for detecting outliers
 std_dev_threshold = 2  # for example, any data point more than 2 standard deviations
 
+# Initialize lists to hold IPC numbers and accuracy data
+ipc_numbers = []
+accuracy_lists = []
+
 # Iterate through each file path
 for path in file_paths:
+    # Extract IPC number from the file path
+    ipc_number = int(path.split('/')[-2].replace('ipc', ''))
+    ipc_numbers.append(ipc_number)
+
     # Check if the path exists
     if not os.path.exists(path):
         print(f"File not found: {path}")
@@ -43,16 +51,23 @@ for path in file_paths:
     filtered_df = df[~outliers.any(axis=1)]
     num_outliers_discarded = len(df) - len(filtered_df)
 
-    # Calculate the average mean and variance for each class after filtering
+    # Calculate the average mean for each class after filtering
     filtered_means = filtered_df.mean()
-    filtered_variances = filtered_df.var()
+
+    # Append the filtered means to the accuracy lists
+    accuracy_lists.append(filtered_means.tolist())
 
     # Print the number of outliers discarded
     print(f"{path} - Outliers discarded: {num_outliers_discarded}")
     
-    # Print the average mean and variance for each class
+    # Print the average mean for each class
     print(f"{path} - Average mean per class after filtering outliers:")
-    print(filtered_means.values)
-    print(f"{path} - Average variance per class after filtering outliers:")
-    print(filtered_variances)
+    print(filtered_means)
     print("-----")
+
+# Output the lists in a format suitable for the visualization script
+print(f"ipc_numbers = {ipc_numbers}")
+print("accuracy_lists = [")
+for acc_list in accuracy_lists:
+    print(f"    {acc_list},")
+print("]")
