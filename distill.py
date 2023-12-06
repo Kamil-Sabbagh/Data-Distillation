@@ -226,6 +226,7 @@ def main(args, num_of_images):
                     best_std[model_eval] = acc_test_std
                     save_this_it = True
                 print('Evaluate %d random %s, mean = %.4f std = %.4f\n-------------------------'%(len(accs_test), model_eval, acc_test_mean, acc_test_std))
+                print(f"Currnetly doing IPC = {num_of_images}")
                 wandb.log({'Accuracy/{}'.format(model_eval): acc_test_mean}, step=it)
                 wandb.log({'Max_Accuracy/{}'.format(model_eval): best_acc[model_eval]}, step=it)
                 wandb.log({'Std/{}'.format(model_eval): acc_test_std}, step=it)
@@ -492,7 +493,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    for num_of_images in [1, 10, 20]:
+    for num_of_images in [1, 5, 10, 15, 20, 25]:
         for _ in range(10):
             args.ipc = num_of_images
             main(args, num_of_images)
