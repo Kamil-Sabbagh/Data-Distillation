@@ -492,7 +492,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    for num_of_images in [5, 15, 25]:
+    for num_of_images in [1, 10, 20]:
         for _ in range(10):
             args.ipc = num_of_images
             main(args, num_of_images)
