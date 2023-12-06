@@ -83,7 +83,7 @@ def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None
             class_names = dst_train.classes
 
              # Assuming x is the number of images you want from each class in the second half
-            x = percentage
+             # x = percentage
 
             # Split classes into two halves
             first_half_classes = class_names[:len(class_names)//2]
@@ -97,8 +97,8 @@ def get_dataset(dataset, data_path, batch_size=1, subset="imagenette", args=None
             labels_second_half = []
             for class_name in second_half_classes:
                 class_idx = class_names.index(class_name)
-                class_data = [data for data, label in dst_train if label == class_idx][:x]
-                class_labels = [label for _, label in dst_train if label == class_idx][:x]
+                class_data = [data for data, label in dst_train if label == class_idx]#[:x]
+                class_labels = [label for _, label in dst_train if label == class_idx]#[:x]
                 
                 data_second_half.extend(class_data)
                 labels_second_half.extend(class_labels)
