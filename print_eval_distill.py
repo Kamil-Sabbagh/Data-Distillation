@@ -5,12 +5,12 @@ import argparse
 
 # List of paths to your CSV files
 file_paths = [
-    "./ipc1/class_accuracies_ConvNet.csv",
-    "./ipc5/class_accuracies_AlexNet.csv",
-    "./ipc10/class_accuracies_ConvNet.csv",
-    "./ipc15/class_accuracies_AlexNet.csv",
-    "./ipc20/class_accuracies_ConvNet.csv",
-    "./ipc25/class_accuracies_AlexNet.csv",
+    "Results/AlexNet/ipc1/class_accuracies_ConvNet.csv",
+    "Results/AlexNet/ipc5/class_accuracies_AlexNet.csv",
+    "Results/AlexNet/ipc10/class_accuracies_ConvNet.csv",
+    "Results/AlexNet/ipc15/class_accuracies_AlexNet.csv",
+    "Results/AlexNet/ipc20/class_accuracies_ConvNet.csv",
+    "Results/AlexNet/ipc25/class_accuracies_AlexNet.csv",
     #"./ipc30/class_accuracies_ConvNet.csv"
 ]
 
