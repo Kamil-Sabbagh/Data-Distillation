@@ -173,7 +173,7 @@ if __name__ == '__main__':
     else:
         zca_trans = None
     
-    for num_of_images in [5, 15, 25]:
+    for num_of_images in [1, 10, 20]:
         folder_name = f".{args.save_path}/ipc{num_of_images}"
         print(f"Saving images at: {folder_name}")
 
